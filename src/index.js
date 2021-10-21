@@ -1,9 +1,10 @@
 const express = require("express");
 const path = require("path");
 const axios = require('axios');
+const morgan = require('morgan');
 
 const app = express();
-
+let data
 
 const apiURL = "http://ec2-54-147-59-92.compute-1.amazonaws.com/api/items/";
 
@@ -15,15 +16,6 @@ const logger = (request, response, next) => {
 } 
 
 /*
-#################
-## Middlewares ##
-#################
-*/
-app.use(express.json());
-app.use(logger);
-app.use(express.static(__dirname + "/public"));
-
-/*
 ######################
 # Get List Resources #
 ######################
@@ -31,9 +23,21 @@ app.use(express.static(__dirname + "/public"));
 const getListResources = () => axios.get(apiURL)
   .then((response) => {
     console.log(response);
-    
+    data = response;
   })
   .catch( error => console.error(error));
+
+
+
+
+/*
+#################
+## Middlewares ##
+#################
+*/
+app.use(express.json());
+app.use(logger);
+app.use(express.static(__dirname + "/public"));
 
 
 
@@ -55,10 +59,7 @@ app.get("/", (request, response) => {
 app.get("/api/list", (request, response) => {
     getListResources();
 
-    response.json({
-        username: "jcjohan2707",
-        age: 20
-    });
+    response.json(data);
 });
 
 app.post("/api/list", (request, response) => {
